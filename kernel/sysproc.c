@@ -117,8 +117,8 @@ sys_pgaccess(void)
     
       if (*pte & PTE_A)
       {
-        mask |= (1L << i);
-        *pte &= ~PTE_A;
+        mask = mask | (1L << i);
+        *pte = *pte & (~PTE_A);
       }
   }
 
