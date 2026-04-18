@@ -187,7 +187,7 @@ void            virtio_disk_rw(struct buf *, int);
 void            virtio_disk_intr(void);
 
 //sysproc.c
-uint64            sys_pgacess(void);
+uint64            sys_pgaccess(void);
 
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))
