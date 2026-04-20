@@ -91,3 +91,39 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+uint64
+sys_pgaccess(void)
+{
+  uint64 va_start;
+  int npages;
+  uint64 user_mask_addr;
+
+  argaddr(0, &va_start);
+  argint(1, &npages);
+  argaddr(2, &user_mask_addr);
+
+  struct proc *p = myproc();
+  uint64 mask = 0;
+
+  for(int i = 0; i < npages; i++)
+  {
+    uint64 va = va_start + i * PGSIZE;
+
+    pte_t *pte = walk(p->pagetable, va, 0);
+    if (pte == 0) {
+      continue;
+    }
+    
+      if (*pte & PTE_A)
+      {
+        mask = mask | (1L << i);
+        *pte = *pte & (~PTE_A);
+      }
+  }
+
+  if(copyout(p->pagetable, user_mask_addr, (char*)&mask, sizeof(mask)) < 0)
+    return -1;
+  
+  return 0;
+}
